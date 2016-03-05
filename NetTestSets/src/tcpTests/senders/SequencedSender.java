@@ -1,16 +1,17 @@
-package servers.unityTcpClient;
+package tcpTests.senders;
 
 import java.io.IOException;
 
 //Need two bytes header
-public class SequencedServer extends BaseTcpTestServer
+public class SequencedSender extends TestMessageSender
 {
 	Element[] elements = { new FirstHeaderPart(), new SecondHeaderPart(), new FirstValue(), new SecondValue() };
 	int num = 0;
 
 	@Override
-	protected void processConnection() throws IOException, InterruptedException {
-		for (int i = 0; i < 8; i++) {
+	public void sendTestMessages() throws IOException, InterruptedException {
+		for (int i = 0; i < 8; i++)
+		{
 			SendTestMessages(i);
 		}
 	}
@@ -83,9 +84,5 @@ public class SequencedServer extends BaseTcpTestServer
 		}
 		print("End------------------------------");
 		stream.flush();
-	}
-
-	public static void main(String[] args) {
-		runServer(new SequencedServer());
 	}
 }

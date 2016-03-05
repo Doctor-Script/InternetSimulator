@@ -1,21 +1,29 @@
-package servers.unityTcpClient;
+package tcpTests.senders;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
-public class RandomServer extends BaseTcpTestServer
+public class RandomSender extends TestMessageSender
 {	
 	Random rand = new Random();
 	int byteNumber;
+	int numMessages;
+	
+	public RandomSender() {
+		numMessages = 20;
+	}
+	public RandomSender(int numMessages) {
+		this.numMessages = numMessages;
+	}
 	
 	@Override
-	protected void processConnection() throws IOException, InterruptedException {
+	public void sendTestMessages() throws IOException, InterruptedException {
 		
 		byte[] bytes = getMessage();
 		byteNumber = 0;
-		int numMessages = 20;
+
 		while (byteNumber < (bytes.length * numMessages)) 
 		{
 			int len = bytes.length * 2 + 1;
@@ -53,9 +61,5 @@ public class RandomServer extends BaseTcpTestServer
 		stream.close();
 		
 		return bos.toByteArray();
-	}
-	
-	public static void main(String[] args) {
-		runServer(new RandomServer());
 	}
 }
