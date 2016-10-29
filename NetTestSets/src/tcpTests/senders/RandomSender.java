@@ -54,7 +54,7 @@ public class RandomSender extends TestMessageSender
 		DataOutputStream stream = new DataOutputStream(bos);
 		
 		stream.writeByte(0);
-		stream.writeByte(TEST);
+		stream.writeShort(TEST);
 		stream.writeInt(getValue1());
 		stream.writeInt(getValue2());
 		stream.flush();

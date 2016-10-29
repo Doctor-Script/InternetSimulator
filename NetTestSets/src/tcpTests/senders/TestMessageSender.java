@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public abstract class TestMessageSender {
 
-	public static final byte TEST = 9;
+	public static final short TEST = 9;
 	public static final int SLEEP = 1000;
 	
 	protected DataOutputStream stream;
