@@ -1,6 +1,7 @@
 package inetTCPTesting.mediator;
 
 import inetTCPTesting.IConnectionHandler;
+import inetTCPTesting.mediator.policy.IWaitPolicy;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -13,9 +14,12 @@ public class MediatorHandler implements IConnectionHandler
 	
 	private SideListener clientListener;
 	private SideListener serverListener;
+	public final IWaitPolicy policy;
 	
-	public MediatorHandler()
+	public MediatorHandler(IWaitPolicy policy)
 	{
+		this.policy = policy;
+		
 		clientListener = new ClientListener(this);
 		serverListener = new ServerListener(this);
 		

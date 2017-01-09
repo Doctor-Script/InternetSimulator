@@ -9,10 +9,8 @@ import java.net.SocketException;
 public class TCPReceiver extends Thread
 {
 	protected Socket socket;
-	protected byte[] dataBuffer;
 	
 	public TCPReceiver() {
-		dataBuffer = new byte[256];
 		setDaemon(true);
 	}
 	
@@ -27,6 +25,7 @@ public class TCPReceiver extends Thread
 			
 			int size;
 			do {
+				byte[] dataBuffer = new byte[256];
 				size = sin.read(dataBuffer);
 				if (size > 0) {
 					onReceived(dataBuffer, size, sout);

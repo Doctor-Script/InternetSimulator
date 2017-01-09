@@ -25,8 +25,7 @@ public class SideListener extends TCPReceiver
 	@Override
 	protected void onReceived(byte[] buffer, int size, OutputStream output) throws IOException
 	{
-		System.out.println("Mediator in");
-		other.output.write(buffer, 0, size);
+		parent.policy.pushMessage(other.output, buffer, size);
 	}
 	
 	void forceClose() throws IOException {
