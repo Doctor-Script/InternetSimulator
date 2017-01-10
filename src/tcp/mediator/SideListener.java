@@ -24,7 +24,7 @@ public class SideListener extends TCPReceivingThread
 	
 	@Override
 	protected void onReceived(byte[] buffer, int size, OutputStream output) throws IOException {
-		parent.pingGenerator.setPingFor(other.output, buffer, size);
+		parent.pingGenerator.setPingFor(other.output, buffer, size, other.socket);
 	}
 	
 	void forceClose() throws IOException {
