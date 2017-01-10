@@ -4,17 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import tcp.TCPReceiver;
+import tcp.TCPReceivingThread;
 
-public class SideListener extends TCPReceiver
+public class SideListener extends TCPReceivingThread
 {
 	protected SideListener other;
 	protected OutputStream output;
 	protected final MediatorHandler parent;
 	
-	public SideListener(MediatorHandler parent) {
+	public SideListener(MediatorHandler parent, String name) {
 		this.parent = parent;
-		
+		setName(name);
 	}
 	
 	@Override
@@ -23,9 +23,8 @@ public class SideListener extends TCPReceiver
 	}
 	
 	@Override
-	protected void onReceived(byte[] buffer, int size, OutputStream output) throws IOException
-	{
-		parent.policy.pushMessage(other.output, buffer, size);
+	protected void onReceived(byte[] buffer, int size, OutputStream output) throws IOException {
+		parent.pingGenerator.setPingFor(other.output, buffer, size);
 	}
 	
 	void forceClose() throws IOException {

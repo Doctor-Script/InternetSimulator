@@ -6,11 +6,11 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class TCPReceiver extends Thread
+public class TCPReceivingThread extends Thread
 {
 	protected Socket socket;
 	
-	public TCPReceiver() {
+	public TCPReceivingThread() {
 		setDaemon(true);
 	}
 	

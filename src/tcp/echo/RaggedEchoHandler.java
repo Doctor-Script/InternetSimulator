@@ -6,10 +6,12 @@ import java.net.Socket;
 import java.util.Arrays;
 
 import tcp.IConnectionHandler;
-import tcp.TCPReceiver;
+import tcp.TCPReceivingThread;
+import tcp.TCPConnetionListener;
+import tcp.config.Config;
 import utils.ByteArrayUtils;
 
-public class RaggedEchoHandler extends TCPReceiver implements IConnectionHandler
+public class RaggedEchoHandler extends TCPReceivingThread implements IConnectionHandler
 {
 	private static final int NUM_MESSAGES_PER_ROUND = 3;
 	private static final int SLEEP = 100;
@@ -51,5 +53,16 @@ public class RaggedEchoHandler extends TCPReceiver implements IConnectionHandler
 	@Override
 	public void setSocket(Socket socket) {
 		this.socket = socket;
+	}
+	
+	@Override
+	public IConnectionHandler clone() {
+		return new RaggedEchoHandler();
+	}
+	
+	public static void main(String[] args)
+	{
+		RaggedEchoHandler handler = new RaggedEchoHandler();
+		new TCPConnetionListener(Config.LISTEN_PORT, handler).run();
 	}
 }

@@ -6,25 +6,31 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 
-import tcp.factory.HandlerFactory;
-
-public class TCPServer
+public class TCPConnetionListener
 {
 	private ServerSocket serverSocket;
-	private int port = 8081;
+	private int listenedPort;
 	private List<IConnectionHandler> handlers = new LinkedList<>();
 	
-	private void run()
+	private IConnectionHandler handlerPrototype;
+	
+	public TCPConnetionListener(int listenedPort, IConnectionHandler handlerPrototype) {
+		this.handlerPrototype = handlerPrototype;
+		this.listenedPort = listenedPort;
+	}
+	
+	public void run()
 	{
 		try {
-			serverSocket = new ServerSocket(port);
+			serverSocket = new ServerSocket(listenedPort);
 			System.out.println("Waiting connections...");
 			
 			while (true)
 			{
 				System.out.println("Wait new...");
 				Socket socket = serverSocket.accept();
-				IConnectionHandler handler = HandlerFactory.generateNewHandler();
+				
+				IConnectionHandler handler = handlerPrototype.clone();
 				handler.setSocket(socket);
 				handlers.add(handler);//is no garbage
 				handler.start();
@@ -36,12 +42,5 @@ public class TCPServer
 				serverSocket.close();
 			} catch (IOException e) {}
 		}
-	}
-	
-	private static TCPServer instance;
-	
-	public static void main(String[] args) {
-		instance = new TCPServer();
-		instance.run();
 	}
 }

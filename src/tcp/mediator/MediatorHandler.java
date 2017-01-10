@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import tcp.IConnectionHandler;
-import tcp.mediator.policy.IWaitPolicy;
+import tcp.mediator.generators.IPingGenerator;
 
 public class MediatorHandler implements IConnectionHandler
 {
@@ -14,46 +14,52 @@ public class MediatorHandler implements IConnectionHandler
 	
 	private SideListener clientListener;
 	private SideListener serverListener;
-	public final IWaitPolicy policy;
+	public final IPingGenerator pingGenerator;
 	
-	public MediatorHandler(IWaitPolicy policy)
+	private final String serverAddress;
+	private final int serverPort;
+	
+	public MediatorHandler(IPingGenerator pingGenerator, String serverAddress, int serverPort)
 	{
-		this.policy = policy;
-		
-		clientListener = new ClientListener(this);
-		serverListener = new ServerListener(this);
-		
-		clientListener.setOther(serverListener);
-		serverListener.setOther(clientListener);
-		
 		synchronized (this) {
 			id = counter++;
 		}
+		
+		this.serverAddress = serverAddress;
+		this.serverPort = serverPort;
+		this.pingGenerator = pingGenerator;
+		
+		clientListener = new SideListener(this, "Client " + Integer.toString(id));
+		serverListener = new SideListener(this, "Server " + Integer.toString(id));
+		
+		clientListener.setOther(serverListener);
+		serverListener.setOther(clientListener);
 	}
 	
 	@Override
-	public void start()
+	public void start() {
+		serverListener.start();
+		clientListener.start();
+	}
+
+	@Override
+	public void setSocket(Socket socket)
 	{
+		clientListener.setSocket(socket);
+		
+		Socket toServerSocket;
 		try {
-			Socket toServerSocket = new Socket("127.0.0.1", 8080);
+			toServerSocket = new Socket(serverAddress, serverPort);
 			serverListener.setSocket(toServerSocket);
-			
-			serverListener.start();
-			clientListener.start();
-			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public void setSocket(Socket socket) {
-		clientListener.setSocket(socket);
-	}
 	
-	public int getConnectionId() {
-		return id;
+	@Override
+	public IConnectionHandler clone() {
+		return new MediatorHandler(pingGenerator, serverAddress, serverPort);
 	}
 }
