@@ -20,6 +20,7 @@ public class FixedPingGenerator extends Thread implements IPingGenerator
 	{
 		queue = new ConcurrentLinkedQueue<FixedPingGenerator.Message>();
 		this.ping = ping;
+		setName("NetworkEventQueue");
 		this.setDaemon(true);
 		this.start();
 	}

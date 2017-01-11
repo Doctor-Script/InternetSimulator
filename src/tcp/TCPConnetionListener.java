@@ -3,14 +3,16 @@ package tcp;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.logging.Logger;
+
+import tcp.config.Config;
 
 public class TCPConnetionListener
 {
+	private static final Logger logger = Config.getLoggerFor(TCPConnetionListener.class);
+	
 	private ServerSocket serverSocket;
 	private int listenedPort;
-	private List<IConnectionHandler> handlers = new LinkedList<>();
 	
 	private IConnectionHandler handlerPrototype;
 	
@@ -23,17 +25,15 @@ public class TCPConnetionListener
 	{
 		try {
 			serverSocket = new ServerSocket(listenedPort);
-			System.out.println("Waiting connections...");
+			logger.info("Start listening...");
 			
 			while (true)
 			{
-				System.out.println("Wait new...");
 				Socket socket = serverSocket.accept();
-				
 				IConnectionHandler handler = handlerPrototype.clone();
 				handler.setSocket(socket);
-				handlers.add(handler);//is no garbage
 				handler.start();
+				logger.info("Accepted...");
 			}
 		} catch(Exception e) {
 			e.printStackTrace();

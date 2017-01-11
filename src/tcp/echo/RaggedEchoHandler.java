@@ -4,24 +4,31 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 import tcp.IConnectionHandler;
-import tcp.TCPReceivingThread;
 import tcp.TCPConnetionListener;
+import tcp.TCPReceivingThread;
 import tcp.config.Config;
 import utils.ByteArrayUtils;
 
 public class RaggedEchoHandler extends TCPReceivingThread implements IConnectionHandler
 {
+	private static final Logger log = Config.getLoggerFor(RaggedEchoHandler.class);
+	
 	private static final int NUM_MESSAGES_PER_ROUND = 3;
 	private static final int SLEEP = 100;
 	
 	private int respondNumber;
 	
+	public RaggedEchoHandler() {
+		super(log);
+	}
+	
 	@Override
 	protected void onReceived(byte[] buffer, int size) throws IOException
 	{
-		System.out.println(bytesToString(buffer, size));
+		print(bytesToString(buffer, size));
 	
 		respondNumber = 1;
 		int discard = 0;
@@ -32,13 +39,13 @@ public class RaggedEchoHandler extends TCPReceivingThread implements IConnection
 			writeData(stageBuffer, 0, i, output);
 			writeData(stageBuffer, i, stageBuffer.length - i, output);
 		}
-		System.out.println("============== END ==============");
+		print("============== END ==============");
 	}
 	
 	private void writeData(byte[] buffer, int offset, int length, OutputStream output) throws IOException
 	{
 		output.write(buffer, offset, length);
-		System.out.println(respondNumber++ + ByteArrayUtils.toString(buffer, offset, length));
+		print(respondNumber++ + ByteArrayUtils.toString(buffer, offset, length));
 		
 		try {
 			Thread.sleep(SLEEP);
@@ -59,6 +66,10 @@ public class RaggedEchoHandler extends TCPReceivingThread implements IConnection
 	@Override
 	public IConnectionHandler clone() {
 		return new RaggedEchoHandler();
+	}
+	
+	private void print(String text) {
+		logger.info(text);
 	}
 	
 	public static void main(String[] args)

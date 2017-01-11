@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.logging.Logger;
 
 public class TCPReceivingThread extends Thread
 {
 	protected Socket socket;
+	protected final Logger logger;
 	
-	public TCPReceivingThread() {
+	public TCPReceivingThread(Logger logger) {
 		setDaemon(true);
+		this.logger = logger;
 	}
 	
 	@Override
@@ -32,7 +35,7 @@ public class TCPReceivingThread extends Thread
 			
 		}
 		catch (SocketException e) {
-			System.out.println(getName() + ": force closed!");
+			logger.info(getName() + ": force closed!");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
