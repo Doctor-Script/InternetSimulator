@@ -7,6 +7,7 @@ import tcp.TCPConnetionListener;
 import tcp.config.Config;
 import tcp.mediator.MediatorHandler;
 
+@Deprecated
 public class SleepPingGenerator implements IPingGenerator
 {
 	private long sleepDelayMS;
