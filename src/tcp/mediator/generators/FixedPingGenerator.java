@@ -1,7 +1,6 @@
 package tcp.mediator.generators;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -26,13 +25,12 @@ public class FixedPingGenerator extends Thread implements IPingGenerator
 	}
 	
 	@Override
-	public void setPingFor(OutputStream targetStream, byte[] buffer, int size, Socket socket) throws IOException {
+	public void setPingFor(Socket target, byte[] buffer, int size) throws IOException {
 		Message message = new Message();
 		message.receiveDate = new Date();
-		message.output = targetStream;
 		message.buffer = buffer;
 		message.size = size;
-		message.socket = socket;
+		message.socket = target;
 		queue.add(message);
 	}
 
@@ -65,7 +63,6 @@ public class FixedPingGenerator extends Thread implements IPingGenerator
 	private class Message
 	{
 		public Date receiveDate;
-		public OutputStream output;
 		public byte[] buffer;
 		public int size;
 		public Socket socket;
@@ -77,7 +74,7 @@ public class FixedPingGenerator extends Thread implements IPingGenerator
 		public void send() throws IOException
 		{
 			if (!socket.isClosed()) {
-				output.write(buffer, 0, size);
+				socket.getOutputStream().write(buffer, 0, size);
 			}
 		}
 	}

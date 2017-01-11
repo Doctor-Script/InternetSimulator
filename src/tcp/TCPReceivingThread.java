@@ -2,7 +2,6 @@ package tcp;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -18,17 +17,16 @@ public class TCPReceivingThread extends Thread
 	public void run()
 	{
 		try {
-			InputStream sin = socket.getInputStream();
-			OutputStream sout = socket.getOutputStream();
+			InputStream socketInputStream = socket.getInputStream();
 			
-			onAccepted(sin, sout);
+			onAccepted();
 			
 			int size;
 			do {
 				byte[] dataBuffer = new byte[256];
-				size = sin.read(dataBuffer);
+				size = socketInputStream.read(dataBuffer);
 				if (size > 0) {
-					onReceived(dataBuffer, size, sout);
+					onReceived(dataBuffer, size);
 				}
 			} while (size > 0);
 			
@@ -46,10 +44,10 @@ public class TCPReceivingThread extends Thread
 		}
 	}
 	
-	protected void onReceived(byte[] dataBuffer, int size, OutputStream output) throws IOException {
+	protected void onReceived(byte[] dataBuffer, int size) throws IOException {
 	}
 	
-	protected void onAccepted(InputStream sin, OutputStream output) throws IOException {
+	protected void onAccepted() throws IOException {
 	}
 	
 	protected void onClosed() throws IOException {

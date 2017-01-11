@@ -1,7 +1,6 @@
 package tcp.mediator.generators;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import tcp.TCPConnetionListener;
@@ -16,7 +15,7 @@ public class SleepPingGenerator implements IPingGenerator
 		this.sleepDelayMS = sleepDelayMS;
 	}
 
-	public void setPingFor(OutputStream output, byte[] buffer, int size, Socket socket) throws IOException
+	public void setPingFor(Socket target, byte[] buffer, int size) throws IOException
 	{
 		try {
 			Thread.sleep(sleepDelayMS);
@@ -24,7 +23,7 @@ public class SleepPingGenerator implements IPingGenerator
 			e.printStackTrace();
 		}
 		
-		output.write(buffer, 0, size);
+		target.getOutputStream().write(buffer, 0, size);
 	}
 	
 	public static void main(String[] args)

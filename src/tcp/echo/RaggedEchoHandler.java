@@ -19,7 +19,7 @@ public class RaggedEchoHandler extends TCPReceivingThread implements IConnection
 	private int respondNumber;
 	
 	@Override
-	protected void onReceived(byte[] buffer, int size, OutputStream output) throws IOException
+	protected void onReceived(byte[] buffer, int size) throws IOException
 	{
 		System.out.println(bytesToString(buffer, size));
 	
@@ -28,6 +28,7 @@ public class RaggedEchoHandler extends TCPReceivingThread implements IConnection
 		byte[] stageBuffer = ByteArrayUtils.multiply(buffer, discard, size - discard, NUM_MESSAGES_PER_ROUND);
 		
 		for (int i = 1; i < size * NUM_MESSAGES_PER_ROUND + 1; i++) {
+			OutputStream output = socket.getOutputStream();
 			writeData(stageBuffer, 0, i, output);
 			writeData(stageBuffer, i, stageBuffer.length - i, output);
 		}

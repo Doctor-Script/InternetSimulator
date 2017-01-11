@@ -1,7 +1,6 @@
 package tcp.mediator;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import tcp.TCPReceivingThread;
@@ -18,13 +17,8 @@ public class SideListener extends TCPReceivingThread
 	}
 	
 	@Override
-	protected void onAccepted(InputStream sin, OutputStream output) throws IOException {
-		this.output = output;
-	}
-	
-	@Override
-	protected void onReceived(byte[] buffer, int size, OutputStream output) throws IOException {
-		parent.pingGenerator.setPingFor(other.output, buffer, size, other.socket);
+	protected void onReceived(byte[] buffer, int size) throws IOException {
+		parent.pingGenerator.setPingFor(other.socket, buffer, size);
 	}
 	
 	void forceClose() throws IOException {
