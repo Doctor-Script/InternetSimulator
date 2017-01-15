@@ -13,6 +13,7 @@ Then client can connect to InternetSimulator. After accepting connection Interne
 Supported generation strategies:
 - [SleepPingGenerator](https://github.com/Doctor-Script/InternetSimulator/blob/master/src/tcp/mediator/generators/SleepPingGenerator.java) use the simplest way to make delay - Thread.sleep(). Because of this, actual delay will will continuously growing. **(Deprecated)**.
 - [FixedPingGenerator](https://github.com/Doctor-Script/InternetSimulator/blob/master/src/tcp/mediator/generators/FixedPingGenerator.java) puts received messages to queue and sends it further after specified time will expire. Can use only fixed delay.
+- [TicTacPingGenerator](https://github.com/Doctor-Script/InternetSimulator/blob/master/src/tcp/mediator/generators/TicTacPingGenerator.java) allows predictably simulate scatter of ping. For each connection it alternates of large and small ping value.
 
 ## Emulation splitting/merging of packets (echo)
 

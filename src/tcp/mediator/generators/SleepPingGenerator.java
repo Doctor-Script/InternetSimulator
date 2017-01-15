@@ -1,11 +1,11 @@
 package tcp.mediator.generators;
 
 import java.io.IOException;
-import java.net.Socket;
 
 import tcp.TCPConnetionListener;
 import tcp.config.Config;
 import tcp.mediator.MediatorHandler;
+import tcp.mediator.SideListener;
 
 @Deprecated
 public class SleepPingGenerator implements IPingGenerator
@@ -16,7 +16,8 @@ public class SleepPingGenerator implements IPingGenerator
 		this.sleepDelayMS = sleepDelayMS;
 	}
 
-	public void setPingFor(Socket target, byte[] buffer, int size) throws IOException
+	@Override
+	public void setPingFor(SideListener target, byte[] buffer, int size) throws IOException
 	{
 		try {
 			Thread.sleep(sleepDelayMS);
@@ -24,7 +25,11 @@ public class SleepPingGenerator implements IPingGenerator
 			e.printStackTrace();
 		}
 		
-		target.getOutputStream().write(buffer, 0, size);
+		target.getSocket().getOutputStream().write(buffer, 0, size);
+	}
+	
+	@Override
+	public void onConnectionEnd(SideListener source) {
 	}
 	
 	public static void main(String[] args)

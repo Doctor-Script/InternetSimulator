@@ -1,40 +1,45 @@
 package tcp.mediator.generators;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import tcp.TCPConnetionListener;
 import tcp.config.Config;
 import tcp.mediator.MediatorHandler;
+import tcp.mediator.SideListener;
 
 public class FixedPingGenerator extends Thread implements IPingGenerator
 {
 	private static final long SLEEP = 1000;
 	
-	private long ping;
+	protected long baseTimeWait;
 	private ConcurrentLinkedQueue<FixedPingGenerator.Message> queue;
 	
-	public FixedPingGenerator(long ping)
+	public FixedPingGenerator(long baseTimeWait)
 	{
 		queue = new ConcurrentLinkedQueue<FixedPingGenerator.Message>();
-		this.ping = ping;
+		this.baseTimeWait = baseTimeWait;
 		setName("NetworkEventQueue");
 		this.setDaemon(true);
 		this.start();
 	}
 	
 	@Override
-	public void setPingFor(Socket target, byte[] buffer, int size) throws IOException {
+	public void setPingFor(SideListener target, byte[] buffer, int size) throws IOException {
+		pushMessage(target, buffer, size, baseTimeWait);
+	}
+	
+	protected void pushMessage(SideListener target, byte[] buffer, int size, long timeWait) {
 		Message message = new Message();
 		message.receiveDate = new Date();
 		message.buffer = buffer;
 		message.size = size;
-		message.socket = target;
+		message.target = target;
+		message.timeWait = timeWait;
 		queue.add(message);
 	}
-
+	
 	@Override
 	public void run()
 	{
@@ -61,21 +66,26 @@ public class FixedPingGenerator extends Thread implements IPingGenerator
 		}
 	}
 	
-	private class Message
+	@Override
+	public void onConnectionEnd(SideListener handler) {
+	}
+	
+	private static class Message
 	{
 		public Date receiveDate;
 		public byte[] buffer;
 		public int size;
-		public Socket socket;
+		public SideListener target;
+		public long timeWait;
 		
 		public boolean isReady(long nowTime) {
-			return nowTime - receiveDate.getTime() > ping;
+			return nowTime - receiveDate.getTime() > timeWait;
 		}
 		
 		public void send() throws IOException
 		{
-			if (!socket.isClosed()) {
-				socket.getOutputStream().write(buffer, 0, size);
+			if (!target.getSocket().isClosed()) {
+				target.getSocket().getOutputStream().write(buffer, 0, size);
 			}
 		}
 	}

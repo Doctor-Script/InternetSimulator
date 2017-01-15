@@ -2,6 +2,7 @@ package tcp.mediator;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.util.logging.Logger;
 
 import tcp.TCPReceivingThread;
@@ -14,7 +15,7 @@ public class SideListener extends TCPReceivingThread
 	
 	protected SideListener other;
 	protected OutputStream output;
-	protected final MediatorHandler parent;
+	public final MediatorHandler parent;
 	
 	public SideListener(MediatorHandler parent, String name)
 	{
@@ -27,7 +28,7 @@ public class SideListener extends TCPReceivingThread
 	protected void onReceived(byte[] buffer, int size) throws IOException
 	{
 		logger.info(ByteArrayUtils.toString(buffer, 0, size));
-		parent.pingGenerator.setPingFor(other.socket, buffer, size);
+		parent.pingGenerator.setPingFor(other, buffer, size);
 	}
 	
 	void forceClose() throws IOException {
@@ -37,9 +38,18 @@ public class SideListener extends TCPReceivingThread
 	@Override
 	protected void onClosed() throws IOException {
 		other.forceClose();
+		parent.pingGenerator.onConnectionEnd(this);
 	}
 	
-	public void setOther(SideListener other) {
+	void setOther(SideListener other) {
 		this.other = other;
+	}
+
+	public SideListener getOther() {
+		return other;
+	}
+	
+	public Socket getSocket() {
+		return socket;
 	}
 }
