@@ -1,6 +1,6 @@
-# InternetSimulator
+# InternetSimulator - multiplayer games testing tool
 
-InternetSimulator is simple tool for emulation transport layer protocols issues on localhost, such as long ping or splitting/merging of packets.
+This is simple tool for emulation transport layer protocols issues on localhost, such as long ping or splitting/merging of packets.
 
 ## Long ping emulation
 
